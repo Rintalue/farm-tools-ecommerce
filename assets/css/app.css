@@ -1,0 +1,322 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+/* This file is for your main application CSS */
+/* assets/css/app.css */
+/* assets/css/app.css */
+
+
+header
+ {
+    background-color: #f8f9fa;
+    
+    
+}
+footer {
+    background-color: #4caf50;
+    color: white;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    width: 100%;
+    bottom: 0;
+}
+
+
+section {
+    margin-bottom: 2rem;
+}
+
+img{
+    width: 46%;
+}
+.image{
+    width: 21%
+}
+.sign{
+    font-weight: bold;
+    font-size: 22px;
+    color: darkblue;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f5f5f5;
+}
+
+h5 {
+    text-align: center;
+    color: #007bff;
+    margin-top: 20px;
+    font-size: 1.3rem;
+}
+h1{
+    text-align: center;
+    color: #007bff;
+    margin-top: 20px;
+    font-size: 1.3rem;
+}
+
+form {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+#search{
+
+    max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: none;
+        background-color: #f8f9fa;
+}
+
+.products {
+    max-width: 1200px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.products ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.products li {
+    box-sizing: border-box;
+    flex: 1 1 calc(33.333% - 20px);
+    margin: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.products img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+}
+
+.products h3 {
+    margin: 10px 0;
+}
+
+.products p {
+    margin: 5px 0;
+}
+
+.submit2 {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 1px 27px;
+    background-color: #4373a6;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 4px;
+}
+
+.submit2:hover {
+    background-color:#516d8a;
+}
+
+@media (max-width: 768px) {
+    .products li {
+        flex: 1 1 calc(50% - 20px);
+        
+    }
+}
+
+@media (max-width: 480px) {
+    .products li {
+        flex: 1 1 100%;
+        
+    }
+}
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+input[type="text"],
+input[type="number"],
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+}
+
+.submit {
+    width: 100%;
+    padding: 10px;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.submit:hover {
+    background-color: #45a049;
+}
+
+.error {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+    form {
+        padding: 15px;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    textarea {
+        font-size: 14px;
+    }
+
+    button {
+        font-size: 14px;
+    }
+}
+
+
+main {
+    padding: 20px;
+}
+
+section {
+    margin-bottom: 40px;
+}
+
+section h2 {
+    text-align: center;
+    color: #4caf50;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.display1 {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.display {
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 10px;
+    width: calc(33% - 40px);
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    text-align: center;
+    display:table;
+}
+
+.display img {
+    max-width: 100%;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    justify-content: center;
+    display: inline-grid;
+}
+
+.display h3 {
+    font-size: 18px;
+    margin: 10px 0;
+    color: #333;
+}
+
+.display p {
+    font-size: 16px;
+    color: #666;
+}
+
+.display p:last-child {
+    font-weight: bold;
+    color: #4caf50;
+}
+@media (max-width: 768px) {
+    li {
+        width: calc(50% - 30px);
+    }
+}
+
+@media (max-width: 480px) {
+    li {
+        width: calc(100% - 20px);
+    }
+}
+
+#input{
+    border-radius: 28px;
+}
+
+.icons-container {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+
+.icons {
+    text-align: center;
+    color: #333;
+}
+
+.icons i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+
+}
+
+.icons .content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.icons .content p {
+    font-size: 1rem;
+    
+}.alert-success {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 1em;
+    margin-bottom: 1em;
+    border: 1px solid #c3e6cb;
+    border-radius: 4px;
+}
