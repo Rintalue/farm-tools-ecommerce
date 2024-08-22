@@ -22,7 +22,7 @@ defmodule Project2Web.CheckoutLive do
            city: "",
            state: "",
            zip_code: "",
-           payment_method: "credit_card"
+           payment_method: "bank_card"
          )}
 
       {:error, _reason} ->
@@ -72,6 +72,25 @@ defmodule Project2Web.CheckoutLive do
           {:noreply, push_navigate(socket, to: "/checkout")}
       end
     else
+      if payment_method == "mpesa" do
+        phone_number = socket.assigns.phone_number
+        amount = Decimal.to_string(socket.assigns.total_price)
+
+        case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
+               phone_number: phone_number,
+               amount: amount,
+               callback_url: "https://yourdomain.com/api/mpesa_callback"
+             }) do
+          {:ok, response} ->
+            IO.inspect(response, label: "Mpesa Response")
+            {:noreply, push_navigate(socket, to: "/user_account")}
+
+          {:error, reason} ->
+            IO.inspect(reason, label: "Mpesa Payment Error")
+            {:noreply, push_navigate(socket, to: "/checkout")}
+        end
+      end
+
       # Handle other payment methods or place order directly
       {:noreply, push_navigate(socket, to: "/user_account")}
     end
