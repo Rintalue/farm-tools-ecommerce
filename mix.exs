@@ -60,7 +60,11 @@ defmodule Project2.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.5"},
-      {:jose, "~> 1.11.10"}
+      {:jose, "~> 1.11.10"},
+      {:poison, "~> 5.0"},
+      {:httpoison, "~> 2.1"},
+      {:timex, "~> 3.0"},
+      {:stripity_stripe, "~> 2.13.0"}
     ]
   end
 

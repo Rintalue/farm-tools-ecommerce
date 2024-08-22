@@ -31,7 +31,8 @@ defmodule Project2Web.HomeLive do
            user_id: user_id,
            vendor_id: nil,
            query: "",
-           cart_message: nil
+           cart_message: nil,
+           navbar_open: false
          )}
 
       vendor_id ->
@@ -44,12 +45,18 @@ defmodule Project2Web.HomeLive do
            user_id: nil,
            vendor_id: vendor_id,
            query: "",
-           cart_message: nil
+           cart_message: nil,
+           navbar_open: false
          )}
 
       true ->
         {:noreply, redirect(socket, to: "/users/log_in")}
     end
+  end
+
+  def handle_event("toggle_navbar", _params, socket) do
+    new_state = !socket.assigns.navbar_open
+    {:noreply, assign(socket, navbar_open: new_state)}
   end
 
   def handle_event("search", %{"query" => query}, socket) do
@@ -114,18 +121,61 @@ defmodule Project2Web.HomeLive do
     ~H"""
     <header>
       <div class="container mx-auto flex justify-between items-center">
-        <h5><a href="/">Farm Tools E-Commerce</a></h5>
+        <button phx-click="toggle_navbar" class="navbar-toggler">
+          ☰
+        </button>
+        &nbsp; <a href="/" class="text-xl font-bold">Farm Tools E-Commerce</a>
 
-        <div class="hidden md:flex items-center space-x-4">
+        <div class={"navbar-collapse " <> (if @navbar_open, do: "show", else: "hide")}>
+          <ul class="flex space-x-4">
+            <li><a href="/" class="hover:text-green-500">Home</a></li>
+            <li><a href="/categories" class="hover:text-green-500">Categories</a></li>
+            <li><a href="/about" class="hover:text-green-500">About</a></li>
+            <li><a href="/contact" class="hover:text-green-500">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div class="hidden md:contents items-center space-x-4">
           <form phx-submit="search" class="flex" id="search">
-            <input type="text" name="query" placeholder="Search products..." id="input" />
+            <input
+              type="text"
+              name="query"
+              placeholder="Search products..."
+              id="input"
+              class="p-2 border border-gray-300 rounded"
+            />
             <button type="submit" class="text-green-500 p-2">
               <i class="fa fa-search" aria-hidden="true"></i>
             </button>
           </form>
+          <%= if @user_id do %>
+            <a href="/cart" class="hover:text-green-500"><i class="fa fa-shopping-cart"></i></a>
+            <a href="/wishlist" class="hover:text-green-500">
+              <i class="fa fa-heart"></i>
+            </a>
+            <a href="/user_account" class="hover:text-green-500">
+              <i class="fa fa-user"></i>
+            </a>
+            <a href="/vendors/log_in" class="hover:text-red-500">
+              <i class="fa fa-user-minus"></i> Logout
+            </a>
+          <% end %>
+
+          <%= if @vendor_id do %>
+            <a href="/vendors/products" class="hover:text-green-500">
+              <i class="fas fa-boxes icon"></i> My products
+            </a>
+            <a href="/vendor_account" class="hover:text-green-500">
+              <i class="fa fa-user"></i> My Account
+            </a>
+            <a href="/users/log_in" class="hover:text-red-500">
+              <i class="fa fa-user-minus"></i> Logout
+            </a>
+          <% end %>
         </div>
       </div>
     </header>
+
     <main class="p-4">
       <section>
         <h2 class="text-center font-bold text-2xl text-green-700 mb-4">Products</h2>
@@ -154,7 +204,7 @@ defmodule Project2Web.HomeLive do
                 <button
                   phx-click="add_to_wishlist"
                   phx-value-product_id={product.id}
-                  class="p-2 bg-blue-900 text-white rounded hover:bg-blue-400"
+                  class="p-2 bg-yellow-500 text-white rounded hover:bg-blue-400"
                 >
                   <i class="fa fa-heart" aria-hidden="true"></i> Add to Wishlist
                 </button>
