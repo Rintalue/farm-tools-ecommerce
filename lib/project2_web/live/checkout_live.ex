@@ -22,7 +22,7 @@ defmodule Project2Web.CheckoutLive do
            city: "",
            state: "",
            zip_code: "",
-           payment_method: ""
+           payment_method: "mpesa"
          )}
 
       {:error, _reason} ->
