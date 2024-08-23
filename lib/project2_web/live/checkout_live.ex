@@ -22,7 +22,7 @@ defmodule Project2Web.CheckoutLive do
            city: "",
            state: "",
            zip_code: "",
-           payment_method: "bank_card"
+           payment_method: ""
          )}
 
       {:error, _reason} ->
@@ -61,25 +61,26 @@ defmodule Project2Web.CheckoutLive do
     user_id = socket.assigns.current_user.id
     payment_method = socket.assigns.payment_method
 
-    if payment_method == "bank_card" do
-      # Generate a Payment Intent and send the client secret
-      case Payments.create_payment_intent(user_id) do
-        {:ok, client_secret} ->
-          {:noreply, push_event(socket, "stripe_checkout", %{client_secret: client_secret})}
+    case payment_method do
+      "bank_card" ->
+        # Generate a Payment Intent and send the client secret
+        case Payments.create_payment_intent(user_id) do
+          {:ok, client_secret} ->
+            {:noreply, push_event(socket, "stripe_checkout", %{client_secret: client_secret})}
 
-        {:error, reason} ->
-          IO.inspect(reason, label: "Payment Intent Error")
-          {:noreply, push_navigate(socket, to: "/checkout")}
-      end
-    else
-      if payment_method == "mpesa" do
+          {:error, reason} ->
+            IO.inspect(reason, label: "Payment Intent Error")
+            {:noreply, push_navigate(socket, to: "/checkout")}
+        end
+
+      "mpesa" ->
         phone_number = socket.assigns.phone_number
         amount = Decimal.to_string(socket.assigns.total_price)
 
         case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
                phone_number: phone_number,
                amount: amount,
-               callback_url: "https://yourdomain.com/api/mpesa_callback"
+               callback_url: "https://fb1b-41-139-227-122.ngrok-free.app/api/mpesa_callback"
              }) do
           {:ok, response} ->
             IO.inspect(response, label: "Mpesa Response")
@@ -89,11 +90,10 @@ defmodule Project2Web.CheckoutLive do
             IO.inspect(reason, label: "Mpesa Payment Error")
             {:noreply, push_navigate(socket, to: "/checkout")}
         end
-      end
-
-      # Handle other payment methods or place order directly
-      {:noreply, push_navigate(socket, to: "/user_account")}
     end
+
+    # Handle other payment methods or place order directly
+    {:noreply, push_navigate(socket, to: "/user_account")}
   end
 
   defp calculate_total_price(order_items) do
@@ -189,9 +189,9 @@ defmodule Project2Web.CheckoutLive do
           name="payment_method"
           class="w-full p-3 border border-gray-300 rounded"
         >
-          <option value="bank_card" selected>Bank Card</option>
+          <option value="bank_card">Bank Card</option>
           <option value="paypal">PayPal</option>
-          <option value="mpesa">Mpesa</option>
+          <option value="mpesa" selected>Mpesa</option>
         </select>
       </div>
 

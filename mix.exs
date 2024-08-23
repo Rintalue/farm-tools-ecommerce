@@ -64,7 +64,8 @@ defmodule Project2.MixProject do
       {:poison, "~> 5.0"},
       {:httpoison, "~> 2.1"},
       {:timex, "~> 3.0"},
-      {:stripity_stripe, "~> 2.13.0"}
+      {:stripity_stripe, "~> 2.13.0"},
+      {:dotenv, "~> 3.0"}
     ]
   end
 

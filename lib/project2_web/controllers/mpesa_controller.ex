@@ -1,15 +1,16 @@
 defmodule Project2Web.MpesaController do
   use Project2Web, :controller
 
-  def callback(conn, %{"Body" => %{"stkCallback" => %{"ResultCode" => result_code}}}) do
-    case result_code do
-      0 ->
-        # Payment was successful, update order status yesss :)
-        conn |> send_resp(200, "Success")
+  def callback(conn, params) do
+    # Debugging line
+    IO.inspect(params, label: "Mpesa Callback Parameters")
 
-      _ ->
-        # Payment failed :(
-        conn |> send_resp(400, "Failure")
-    end
+    # Handle the callback from Mpesa here
+    # You can save the response to the database, log it, etc.
+
+    # Respond to Mpesa to acknowledge receipt of the callback
+    conn
+    |> put_status(:ok)
+    |> json(%{message: "Callback received"})
   end
 end

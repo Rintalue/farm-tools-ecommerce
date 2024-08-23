@@ -28,10 +28,12 @@ defmodule Project2Web.Router do
     live "/products/:id/edit", EditProductLive, :edit
   end
 
-  # scope "/api", Project2Web do
-  #  pipe_through :api
-  # resources "/mpesa", MpesaController, except: [:new, :edit]
-  # end
+  scope "/api", Project2Web do
+    pipe_through :api
+    get "/mpesa_callback", MpesaController, :callback
+
+    post "/mpesa_callback", MpesaController, :callback
+  end
 
   # Other scopes may use custom stacks.
   # scope "/api", Project2Web do
