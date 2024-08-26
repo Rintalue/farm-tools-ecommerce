@@ -1,11 +1,8 @@
 defmodule Project2.Payments.Mpesa do
   @base_url "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
   @shortcode "174379"
-
   @passkey "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-
   @consumer_key "sNAkVZ5Nrky9BWY8ydDR90msGE8EHapYStmEZcv664RSW871"
-
   @consumer_secret "zIJAUXFdQqZCFgn5W3ttflZzOt4SZv3Aoq8V6kG75nLI594MpWJshlFGXV3GT6XC"
 
   def lipa_na_mpesa_online(%{
@@ -13,38 +10,44 @@ defmodule Project2.Payments.Mpesa do
         amount: amount,
         callback_url: callback_url
       }) do
-    IO.inspect(@passkey, label: "MPESA_PASSKEY at runtime")
-
-    IO.inspect(@consumer_key, label: "MPESA_CONSUMER_KEY at runtime")
-
-    IO.inspect(@consumer_secret, label: "MPESA_CONSUMER_SECRET at runtime")
-
     timestamp = Timex.format!(Timex.now(), "%Y%m%d%H%M%S", :strftime)
-
-    password = Base.encode64(@shortcode <> @passkey <> timestamp)
+    password = Base.encode64("#{@shortcode}#{@passkey}#{timestamp}")
 
     payload = %{
       "BusinessShortCode" => @shortcode,
       "Password" => password,
       "Timestamp" => timestamp,
       "TransactionType" => "CustomerPayBillOnline",
-      "Amount" => amount,
-      "PartyA" => 254_705_357_840,
+      "Amount" => to_string(amount),
+      "PartyA" => to_string(phone_number),
       "PartyB" => @shortcode,
-      "PhoneNumber" => phone_number,
+      "PhoneNumber" => to_string(phone_number),
       "CallBackURL" => callback_url,
       "AccountReference" => "Luthera",
       "TransactionDesc" => "Payment of X"
     }
 
-    headers = [{"Authorization", "Bearer " <> get_access_token()}]
+    headers = [
+      {"Authorization", "Bearer " <> get_access_token()},
+      {"Content-Type", "application/json"}
+    ]
 
     IO.inspect(payload, label: "Request Payload")
     IO.inspect(headers, label: "Request Headers")
 
-    HTTPoison.post(@base_url, Jason.encode!(payload), headers, [
-      {"Content-Type", "application/json"}
-    ])
+    case HTTPoison.post(@base_url, Jason.encode!(payload), headers) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        IO.inspect(body, label: "Mpesa Response")
+        {:ok, body}
+
+      {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
+        IO.puts("Request failed with status #{status_code}: #{body}")
+        {:error, body}
+
+      {:error, %HTTPoison.Error{reason: reason}} ->
+        IO.puts("HTTP request failed: #{reason}")
+        {:error, reason}
+    end
   end
 
   defp get_access_token do

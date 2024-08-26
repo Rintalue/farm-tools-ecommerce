@@ -42,6 +42,8 @@ defmodule Project2Web.CheckoutLive do
         },
         socket
       ) do
+    IO.inspect(phone_number, label: "Captured Phone Number")
+
     {:noreply,
      assign(socket,
        full_name: full_name,
@@ -116,7 +118,7 @@ defmodule Project2Web.CheckoutLive do
           <h3 class="text-xl font-semibold mb-4">Shipping Information</h3>
           <input
             type="text"
-            phx-change="update_address"
+            phx-input="update_address"
             name="full_name"
             value={@full_name}
             class="w-full p-3 border border-gray-300 rounded mb-4"
@@ -124,7 +126,7 @@ defmodule Project2Web.CheckoutLive do
           />
           <input
             type="text"
-            phx-change="update_address"
+            phx-input="update_address"
             name="phone_number"
             value={@phone_number}
             class="w-full p-3 border border-gray-300 rounded mb-4"
@@ -132,7 +134,7 @@ defmodule Project2Web.CheckoutLive do
           />
           <input
             type="text"
-            phx-change="update_address"
+            phx-input="update_address"
             name="shipping_address"
             value={@shipping_address}
             class="w-full p-3 border border-gray-300 rounded mb-4"
@@ -140,7 +142,7 @@ defmodule Project2Web.CheckoutLive do
           />
           <input
             type="text"
-            phx-change="update_address"
+            phx-input="update_address"
             name="city"
             value={@city}
             class="w-full p-3 border border-gray-300 rounded mb-4"
@@ -148,7 +150,7 @@ defmodule Project2Web.CheckoutLive do
           />
           <input
             type="text"
-            phx-change="update_address"
+            phx-input="update_address"
             name="state"
             value={@state}
             class="w-full p-3 border border-gray-300 rounded mb-4"
@@ -156,7 +158,7 @@ defmodule Project2Web.CheckoutLive do
           />
           <input
             type="text"
-            phx-change="update_address"
+            phx-input="update_address"
             name="zip_code"
             value={@zip_code}
             class="w-full p-3 border border-gray-300 rounded"
