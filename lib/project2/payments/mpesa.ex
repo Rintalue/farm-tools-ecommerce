@@ -29,11 +29,8 @@ defmodule Project2.Payments.Mpesa do
       "Timestamp" => timestamp,
       "TransactionType" => "CustomerPayBillOnline",
       "Amount" => amount,
-      # Make sure this is not an empty string
       "PartyA" => 254_705_357_840,
-      # No quotes needed here
       "PartyB" => @shortcode,
-      # Make sure this is not an empty string
       "PhoneNumber" => phone_number,
       "CallBackURL" => callback_url,
       "AccountReference" => "Luthera",
@@ -61,7 +58,6 @@ defmodule Project2.Payments.Mpesa do
       {:ok, %HTTPoison.Response{body: body, status_code: 200}} ->
         case Jason.decode(body) do
           {:ok, %{"access_token" => access_token}} ->
-            # Debugging line
             IO.puts("Access Token: #{access_token}")
             access_token
 
