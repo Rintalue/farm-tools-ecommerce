@@ -1,11 +1,11 @@
 defmodule Project2.Payments.Mpesa do
   @base_url "https://sandbox.safaricom.co.ke/mpesa/stkpush/v1/processrequest"
   @shortcode "174379"
-  # Replace with your actual passkey
+
   @passkey "bfb279f9aa9bdbcf158e97dd71a467cd2e0c893059b10f78e6b72ada1ed2c919"
-  # Replace with your actual consumer key
+
   @consumer_key "sNAkVZ5Nrky9BWY8ydDR90msGE8EHapYStmEZcv664RSW871"
-  # Replace with your actual consumer secret
+
   @consumer_secret "zIJAUXFdQqZCFgn5W3ttflZzOt4SZv3Aoq8V6kG75nLI594MpWJshlFGXV3GT6XC"
 
   def lipa_na_mpesa_online(%{
@@ -13,17 +13,13 @@ defmodule Project2.Payments.Mpesa do
         amount: amount,
         callback_url: callback_url
       }) do
-    # Debugging line
     IO.inspect(@passkey, label: "MPESA_PASSKEY at runtime")
-    # Debugging line
+
     IO.inspect(@consumer_key, label: "MPESA_CONSUMER_KEY at runtime")
-    # Debugging line
+
     IO.inspect(@consumer_secret, label: "MPESA_CONSUMER_SECRET at runtime")
 
-    timestamp =
-      :os.system_time(:second)
-      |> DateTime.from_unix!()
-      |> DateTime.to_iso8601()
+    timestamp = Timex.format!(Timex.now(), "%Y%m%d%H%M%S", :strftime)
 
     password = Base.encode64(@shortcode <> @passkey <> timestamp)
 
@@ -75,7 +71,6 @@ defmodule Project2.Payments.Mpesa do
         end
 
       {:ok, %HTTPoison.Response{status_code: status_code, body: body}} ->
-        # Debugging line
         IO.puts("Failed to get token, status: #{status_code}, body: #{body}")
         nil
 

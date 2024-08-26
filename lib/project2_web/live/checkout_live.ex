@@ -17,7 +17,7 @@ defmodule Project2Web.CheckoutLive do
            order_items: order_items,
            total_price: total_price,
            full_name: "",
-           phone_number: "",
+           phone_number: "254705357840",
            shipping_address: "",
            city: "",
            state: "",
@@ -60,40 +60,44 @@ defmodule Project2Web.CheckoutLive do
   def handle_event("place_order", _params, socket) do
     user_id = socket.assigns.current_user.id
     payment_method = socket.assigns.payment_method
+    phone_number = socket.assigns.phone_number
+    amount = Decimal.to_string(socket.assigns.total_price)
 
-    case payment_method do
-      "bank_card" ->
-        # Generate a Payment Intent and send the client secret
-        case Payments.create_payment_intent(user_id) do
-          {:ok, client_secret} ->
-            {:noreply, push_event(socket, "stripe_checkout", %{client_secret: client_secret})}
+    if phone_number == "" do
+      IO.puts("Phone number is required for Mpesa payment.")
+      {:noreply, push_event(socket, "phone_number_missing", %{})}
+    else
+      case payment_method do
+        "bank_card" ->
+          case Payments.create_payment_intent(user_id) do
+            {:ok, client_secret} ->
+              {:noreply, push_event(socket, "stripe_checkout", %{client_secret: client_secret})}
 
-          {:error, reason} ->
-            IO.inspect(reason, label: "Payment Intent Error")
-            {:noreply, push_navigate(socket, to: "/checkout")}
-        end
+            {:error, reason} ->
+              IO.inspect(reason, label: "Payment Intent Error")
+              {:noreply, push_navigate(socket, to: "/checkout")}
+          end
 
-      "mpesa" ->
-        phone_number = socket.assigns.phone_number
-        amount = Decimal.to_string(socket.assigns.total_price)
+        "mpesa" ->
+          case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
+                 phone_number: phone_number,
+                 amount: amount,
+                 callback_url: "https://fb1b-41-139-227-122.ngrok-free.app/api/mpesa_callback"
+               }) do
+            {:ok, response} ->
+              IO.inspect(response, label: "Mpesa Response")
+              {:noreply, push_navigate(socket, to: "/user_account")}
 
-        case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
-               phone_number: phone_number,
-               amount: amount,
-               callback_url: "https://fb1b-41-139-227-122.ngrok-free.app/api/mpesa_callback"
-             }) do
-          {:ok, response} ->
-            IO.inspect(response, label: "Mpesa Response")
-            {:noreply, push_navigate(socket, to: "/user_account")}
+            {:error, %HTTPoison.Error{reason: reason}} ->
+              IO.inspect(reason, label: "Mpesa HTTPoison Error")
+              {:noreply, push_navigate(socket, to: "/checkout")}
 
-          {:error, reason} ->
-            IO.inspect(reason, label: "Mpesa Payment Error")
-            {:noreply, push_navigate(socket, to: "/checkout")}
-        end
+            {:error, error} ->
+              IO.inspect(error, label: "Mpesa Payment Error")
+              {:noreply, push_navigate(socket, to: "/checkout")}
+          end
+      end
     end
-
-    # Handle other payment methods or place order directly
-    {:noreply, push_navigate(socket, to: "/user_account")}
   end
 
   defp calculate_total_price(order_items) do
