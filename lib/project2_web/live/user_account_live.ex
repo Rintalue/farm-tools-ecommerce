@@ -1,33 +1,29 @@
-# lib/project2_web/live/user_account_live.ex
 defmodule Project2Web.UserAccountLive do
   use Phoenix.LiveView
-  alias Project2.Carts
-
-  def mount(_params, _session, socket) do
-    user_id = socket.assigns.current_user.id
-    orders = Carts.list_orders_by_user(user_id)
-
-    {:ok, assign(socket, orders: orders)}
-  end
+  alias Project2.Carts.Cart
 
   def render(assigns) do
     ~H"""
-    <div class="p-4">
-      <h2 class="text-center font-bold text-2xl text-green-700 mb-4">My Orders</h2>
-      <%= if @orders == [] do %>
-        <p>You have no orders yet.</p>
-      <% else %>
-        <ul class="list-none">
-          <%= for order <- @orders do %>
-            <li class="p-4 mb-4 border-b">
-              <p>Product: <%= order.product.name %></p>
-              <p>Quantity: <%= order.quantity %></p>
-              <p>Status: <%= order.status %></p>
-            </li>
-          <% end %>
-        </ul>
-      <% end %>
+    <div>
+      <h1>My Orders</h1>
+      <ul>
+        <%= for item <- @order_items do %>
+          <li>
+            <%= item.product.name %> - <%= item.status %>
+            <%= if item.status == "paid" do %>
+              <p>Receipt Number: <%= item.mpesa_receipt_number %></p>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
     </div>
     """
+  end
+
+  def mount(_params, session, socket) do
+    user = Project2.Accounts.get_user!(session["user_id"])
+    order_items = Cart.get_user_order_items(user.id)
+
+    {:ok, assign(socket, order_items: order_items)}
   end
 end

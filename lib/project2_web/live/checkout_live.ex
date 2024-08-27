@@ -17,7 +17,7 @@ defmodule Project2Web.CheckoutLive do
            order_items: order_items,
            total_price: total_price,
            full_name: "",
-           phone_number: "254705357840",
+           phone_number: "",
            shipping_address: "",
            city: "",
            state: "",
@@ -84,7 +84,7 @@ defmodule Project2Web.CheckoutLive do
           case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
                  phone_number: phone_number,
                  amount: amount,
-                 callback_url: "https://fb1b-41-139-227-122.ngrok-free.app/api/mpesa_callback"
+                 callback_url: "https://bc31-41-139-227-122.ngrok-free.app/api/mpesa_callback"
                }) do
             {:ok, response} ->
               IO.inspect(response, label: "Mpesa Response")
@@ -116,54 +116,50 @@ defmodule Project2Web.CheckoutLive do
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <div class="checkout-section bg-white p-6 border rounded shadow">
           <h3 class="text-xl font-semibold mb-4">Shipping Information</h3>
-          <input
-            type="text"
-            phx-input="update_address"
-            name="full_name"
-            value={@full_name}
-            class="w-full p-3 border border-gray-300 rounded mb-4"
-            placeholder="Full Name"
-          />
-          <input
-            type="text"
-            phx-input="update_address"
-            name="phone_number"
-            value={@phone_number}
-            class="w-full p-3 border border-gray-300 rounded mb-4"
-            placeholder="Phone Number"
-          />
-          <input
-            type="text"
-            phx-input="update_address"
-            name="shipping_address"
-            value={@shipping_address}
-            class="w-full p-3 border border-gray-300 rounded mb-4"
-            placeholder="Shipping Address"
-          />
-          <input
-            type="text"
-            phx-input="update_address"
-            name="city"
-            value={@city}
-            class="w-full p-3 border border-gray-300 rounded mb-4"
-            placeholder="City"
-          />
-          <input
-            type="text"
-            phx-input="update_address"
-            name="state"
-            value={@state}
-            class="w-full p-3 border border-gray-300 rounded mb-4"
-            placeholder="County"
-          />
-          <input
-            type="text"
-            phx-input="update_address"
-            name="zip_code"
-            value={@zip_code}
-            class="w-full p-3 border border-gray-300 rounded"
-            placeholder="Zip Code"
-          />
+          <form phx-change="update_address">
+            <input
+              type="text"
+              name="full_name"
+              value={@full_name}
+              class="w-full p-3 border border-gray-300 rounded mb-4"
+              placeholder="Full Name"
+            />
+            <input
+              type="text"
+              name="phone_number"
+              value={@phone_number}
+              class="w-full p-3 border border-gray-300 rounded mb-4"
+              placeholder="Phone Number"
+            />
+            <input
+              type="text"
+              name="shipping_address"
+              value={@shipping_address}
+              class="w-full p-3 border border-gray-300 rounded mb-4"
+              placeholder="Shipping Address"
+            />
+            <input
+              type="text"
+              name="city"
+              value={@city}
+              class="w-full p-3 border border-gray-300 rounded mb-4"
+              placeholder="City"
+            />
+            <input
+              type="text"
+              name="state"
+              value={@state}
+              class="w-full p-3 border border-gray-300 rounded mb-4"
+              placeholder="County"
+            />
+            <input
+              type="text"
+              name="zip_code"
+              value={@zip_code}
+              class="w-full p-3 border border-gray-300 rounded"
+              placeholder="Zip Code"
+            />
+          </form>
         </div>
 
         <div class="checkout-section bg-white p-6 border rounded shadow">

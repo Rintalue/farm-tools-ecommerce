@@ -6,6 +6,8 @@ defmodule Project2.Products do
   import Ecto.Query, warn: false
   alias Project2.Repo
 
+  alias Project2.Carts.OrderItem
+
   alias Project2.Products.Product
 
   @doc """
@@ -123,5 +125,16 @@ defmodule Project2.Products do
   def search_products_by_name(query) do
     from(p in Product, where: ilike(p.name, ^"%#{query}%"))
     |> Repo.all()
+  end
+
+  def get_vendor_sales(vendor_id) do
+    products = Repo.all(from p in Product, where: p.vendor_id == ^vendor_id)
+
+    Enum.map(products, fn product ->
+      items =
+        Repo.all(from o in OrderItem, where: o.product_id == ^product.id and o.status == "paid")
+
+      {product, items}
+    end)
   end
 end

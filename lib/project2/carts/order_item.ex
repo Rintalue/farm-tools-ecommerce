@@ -5,8 +5,12 @@ defmodule Project2.Carts.OrderItem do
   schema "order_items" do
     belongs_to :cart, Project2.Carts.Cart
     belongs_to :product, Project2.Products.Product
+    field :status, :string
     field :quantity, :integer
-    field :status, :string, default: "pending"
+    field :checkout_request_id, :string
+    field :mpesa_receipt_number, :string
+    field :amount_paid, :float
+
     timestamps()
   end
 

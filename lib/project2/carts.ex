@@ -9,6 +9,7 @@ defmodule Project2.Carts do
     |> Repo.insert()
   end
 
+  @spec get_cart(any()) :: {:error, <<_::112>>} | {:ok, any()}
   def get_cart(user_id) do
     case Repo.one(from(c in Cart, where: c.user_id == ^user_id)) do
       nil -> {:error, "Cart not found"}
@@ -100,5 +101,18 @@ defmodule Project2.Carts do
     else
       {:error, :order_item_not_found}
     end
+  end
+
+  def update_order_status(checkout_request_id, status, receipt_number, amount) do
+    order_item = Repo.get_by(OrderItem, checkout_request_id: checkout_request_id)
+
+    changeset =
+      OrderItem.changeset(order_item, %{
+        status: status,
+        mpesa_receipt_number: receipt_number,
+        amount_paid: amount
+      })
+
+    Repo.update(changeset)
   end
 end

@@ -120,14 +120,17 @@ defmodule Project2Web.HomeLive do
   def render(assigns) do
     ~H"""
     <header>
-      <div class="container mx-auto flex justify-between items-center">
+      <div class="container mx-auto flex  items-center">
         <button phx-click="toggle_navbar" class="navbar-toggler">
           ☰
         </button>
         &nbsp; <a href="/" class="text-xl font-bold">Farm Tools E-Commerce</a>
 
         <div class={"navbar-collapse " <> (if @navbar_open, do: "show", else: "hide")}>
-          <ul class="flex space-x-4">
+          <ul
+            class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4"
+            style="margin:23px;"
+          >
             <li><a href="/" class="hover:text-green-500">Home</a></li>
             <li><a href="/categories" class="hover:text-green-500">Categories</a></li>
             <li><a href="/about" class="hover:text-green-500">About</a></li>
@@ -135,7 +138,7 @@ defmodule Project2Web.HomeLive do
           </ul>
         </div>
 
-        <div class="hidden md:contents items-center space-x-4">
+        <div class="hidden md:flex items-center space-x-4" style="flex:4;">
           <form phx-submit="search" class="flex" id="search">
             <input
               type="text"
@@ -149,12 +152,12 @@ defmodule Project2Web.HomeLive do
             </button>
           </form>
           <%= if @user_id do %>
-            <a href="/cart" class="hover:text-green-500"><i class="fa fa-shopping-cart"></i></a>
+            <a href="/cart" class="hover:text-green-500"><i class="fa fa-shopping-cart"></i>Cart</a>
             <a href="/wishlist" class="hover:text-green-500">
-              <i class="fa fa-heart"></i>
+              <i class="fa fa-heart"></i>Wishlist
             </a>
             <a href="/user_account" class="hover:text-green-500">
-              <i class="fa fa-user"></i>
+              <i class="fa fa-user"></i> My account
             </a>
             <a href="/vendors/log_in" class="hover:text-red-500">
               <i class="fa fa-user-minus"></i> Logout
@@ -214,6 +217,50 @@ defmodule Project2Web.HomeLive do
         </ul>
       </section>
     </main>
+
+    <nav class="fixed bottom-0 left-0 w-full bg-white shadow-md md:hidden">
+      <div class="container mx-auto flex items-center justify-between p-4">
+        <form phx-submit="search" class="flex" id="search">
+          <input
+            type="text"
+            name="query"
+            placeholder="Search products..."
+            id="input"
+            class="p-2 border border-gray-300 rounded"
+          />
+          <button type="submit" class="text-green-500 p-2">
+            <i class="fa fa-search" aria-hidden="true"></i>
+          </button>
+
+          <div class="flex space-x-4">
+            <%= if @user_id do %>
+              <a href="/cart" class="hover:text-green-500"><i class="fa fa-shopping-cart"></i></a>
+              <a href="/wishlist" class="hover:text-green-500">
+                <i class="fa fa-heart"></i>
+              </a>
+              <a href="/user_account" class="hover:text-green-500">
+                <i class="fa fa-user"></i>
+              </a>
+              <a href="/vendors/log_in" class="hover:text-red-500">
+                <i class="fa fa-user-minus"></i>
+              </a>
+            <% end %>
+
+            <%= if @vendor_id do %>
+              <a href="/vendors/products" class="hover:text-green-500">
+                <i class="fas fa-boxes icon"></i> My products
+              </a>
+              <a href="/vendor_account" class="hover:text-green-500">
+                <i class="fa fa-user"></i> My Account
+              </a>
+              <a href="/users/log_in" class="hover:text-red-500">
+                <i class="fa fa-user-minus"></i> Logout
+              </a>
+            <% end %>
+          </div>
+        </form>
+      </div>
+    </nav>
     <footer>
       <section class="icons-container grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
         <div class="icons">
