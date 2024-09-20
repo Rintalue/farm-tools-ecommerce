@@ -7,7 +7,7 @@ defmodule Project2.Products do
   alias Project2.Repo
 
   alias Project2.Carts.OrderItem
-
+  alias Project2.Products.Category
   alias Project2.Products.Product
 
   @doc """
@@ -24,7 +24,7 @@ defmodule Project2.Products do
   end
 
   def list_products_by_vendor(vendor_id) do
-    from(p in Product, where: p.vendor_id == ^vendor_id)
+    from(p in Product, where: p.vendor_id == ^vendor_id, preload: [:category])
     |> Repo.all()
   end
 
@@ -127,6 +127,9 @@ defmodule Project2.Products do
     |> Repo.all()
   end
 
+  @doc """
+  Returns vendor sales including products and order items.
+  """
   def get_vendor_sales(vendor_id) do
     products = Repo.all(from p in Product, where: p.vendor_id == ^vendor_id)
 
@@ -136,5 +139,36 @@ defmodule Project2.Products do
 
       {product, items}
     end)
+  end
+
+  @doc """
+  Lists all categories.
+  """
+  def list_categories do
+    Repo.all(Category)
+  end
+
+  @doc """
+  Lists products grouped by category.
+  """
+  def list_products_grouped_by_category do
+    from(p in Product,
+      join: c in assoc(p, :category),
+      preload: [category: c],
+      select: %{category_id: c.id, category_name: c.name, product: p},
+      order_by: [asc: c.id, asc: p.name]
+    )
+    |> Repo.all()
+    |> Enum.group_by(& &1.category_id, fn %{category_name: category_name, product: product} ->
+      {category_name, product}
+    end)
+  end
+
+  @doc """
+  Lists products by category ID.
+  """
+  def list_products_by_category(category_id) do
+    from(p in Product, where: p.category_id == ^category_id)
+    |> Repo.all()
   end
 end

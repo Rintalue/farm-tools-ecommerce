@@ -4,9 +4,11 @@ defmodule Project2Web.EditProductLive do
   alias Project2.Products
 
   def mount(%{"id" => id}, _session, socket) do
+    categories = Products.list_categories()
+
     product = Products.get_product!(id)
     changeset = Products.change_product(product)
-    {:ok, assign(socket, changeset: changeset, product: product)}
+    {:ok, assign(socket, changeset: changeset, product: product, categories: categories)}
   end
 
   def handle_event("save", %{"product" => product_params}, socket) do
@@ -61,6 +63,14 @@ defmodule Project2Web.EditProductLive do
         <%= @changeset.data.description || "" %>
       </textarea>
       <%= error_tag(@changeset, :description) %>
+
+      <label for="product_category">Category</label>
+      <select name="product[category_id]" id="product_category">
+        <%= for category <- @categories do %>
+          <option value={category.id}><%= category.name %></option>
+        <% end %>
+      </select>
+      <%= error_tag(@changeset, :category_id) %>
 
       <label for="product_price">Price</label>
       <input

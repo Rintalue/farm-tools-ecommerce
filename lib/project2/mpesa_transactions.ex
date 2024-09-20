@@ -55,7 +55,6 @@ defmodule Project2.Payments.MpesaTransactions do
   end
 
   defp parse_transaction_date(date_string) do
-    # Parse the transaction date from the callback format
     Timex.parse!(date_string, "{YYYY}{0M}{0D}{h24}{m}{s}")
   end
 end

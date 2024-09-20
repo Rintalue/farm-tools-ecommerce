@@ -7,6 +7,7 @@ defmodule Project2.Accounts do
   alias Project2.Repo
 
   alias Project2.Accounts.{User, UserToken, UserNotifier}
+  alias Project2.Accounts.UserAddress
 
   ## Database getters
 
@@ -326,6 +327,24 @@ defmodule Project2.Accounts do
     else
       _ -> nil
     end
+  end
+
+  def save_user_address(user_id, attrs) do
+    case Repo.get_by(UserAddress, user_id: user_id) do
+      nil ->
+        %UserAddress{}
+        |> UserAddress.changeset(attrs)
+        |> Repo.insert()
+
+      address ->
+        address
+        |> UserAddress.changeset(attrs)
+        |> Repo.update()
+    end
+  end
+
+  def get_user_address(user_id) do
+    Repo.get_by(UserAddress, user_id: user_id)
   end
 
   @doc """

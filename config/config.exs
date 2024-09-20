@@ -61,7 +61,19 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
-config :stripity_stripe, api_key: System.get_env("STRIPE_API_KEY")
+config :stripity_stripe,
+  api_key:
+    System.get_env(
+      "sk_test_51Pq9URRuHbT5mBnoglmp644ioyzgY6JMRfPC871SCK107bKPmQmlhTfHSaTBCKHa7Oi4P4pmaD5rhXJO1hpHbA7J00bgacyzmq"
+    )
+
+# config :project2, Project2.Payments,
+# paypal_client_id:
+#   "AV7svX9iRpOj36DQmR66iy-URwXbeDzVbHSSN21VqdiYx0ty6KShXzyp-kkkb09sSaBRaL_LlWIJMzfe",
+# paypal_secret:
+# "EE8l1z-9RXF5xy2FS5PXTFl2gYAm7YduY8RZH6co_aQp9j_PjE9px7sN4i1JaOuQICH4CG3T5xWHeslO",
+#
+# paypal_mode: "sandbox"
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.

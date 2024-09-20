@@ -26,12 +26,13 @@ defmodule Project2Web.Router do
     live "/", HomeLive, :home
     live "/products/new", VendorProductLive, :new
     live "/products/:id/edit", EditProductLive, :edit
+    live "/categories", CategoryLive, :index
+    live "/products/:id", ProductDetailLive, :show
   end
 
   scope "/api", Project2Web do
     pipe_through :api
-    get "/mpesa_callback", MpesaController, :callback
-
+    get "/mpesa_callback", MpesaController, :get_error
     post "/mpesa_callback", MpesaController, :callback
   end
 

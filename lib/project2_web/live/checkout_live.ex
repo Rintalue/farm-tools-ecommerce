@@ -2,6 +2,7 @@ defmodule Project2Web.CheckoutLive do
   use Phoenix.LiveView
   alias Project2.Carts
   alias Project2.Payments
+  alias Project2.Accounts
 
   def mount(_params, _session, socket) do
     user_id = socket.assigns.current_user.id
@@ -11,17 +12,28 @@ defmodule Project2Web.CheckoutLive do
         order_items = Carts.list_order_items(cart.id)
         total_price = calculate_total_price(order_items)
 
+        address =
+          Accounts.get_user_address(user_id) ||
+            %{
+              full_name: "",
+              phone_number: "",
+              shipping_address: "",
+              city: "",
+              state: "",
+              zip_code: ""
+            }
+
         {:ok,
          assign(socket,
            cart: cart,
            order_items: order_items,
            total_price: total_price,
-           full_name: "",
-           phone_number: "",
-           shipping_address: "",
-           city: "",
-           state: "",
-           zip_code: "",
+           full_name: address.full_name,
+           phone_number: address.phone_number,
+           shipping_address: address.shipping_address,
+           city: address.city,
+           state: address.state,
+           zip_code: address.zip_code,
            payment_method: "mpesa"
          )}
 
@@ -42,8 +54,6 @@ defmodule Project2Web.CheckoutLive do
         },
         socket
       ) do
-    IO.inspect(phone_number, label: "Captured Phone Number")
-
     {:noreply,
      assign(socket,
        full_name: full_name,
@@ -65,40 +75,59 @@ defmodule Project2Web.CheckoutLive do
     phone_number = socket.assigns.phone_number
     amount = Decimal.to_string(socket.assigns.total_price)
 
-    if phone_number == "" do
-      IO.puts("Phone number is required for Mpesa payment.")
-      {:noreply, push_event(socket, "phone_number_missing", %{})}
-    else
-      case payment_method do
-        "bank_card" ->
-          case Payments.create_payment_intent(user_id) do
-            {:ok, client_secret} ->
-              {:noreply, push_event(socket, "stripe_checkout", %{client_secret: client_secret})}
+    address_params = %{
+      full_name: socket.assigns.full_name,
+      phone_number: phone_number,
+      shipping_address: socket.assigns.shipping_address,
+      city: socket.assigns.city,
+      state: socket.assigns.state,
+      zip_code: socket.assigns.zip_code,
+      user_id: user_id
+    }
 
-            {:error, reason} ->
-              IO.inspect(reason, label: "Payment Intent Error")
-              {:noreply, push_navigate(socket, to: "/checkout")}
+    case Accounts.save_user_address(user_id, address_params) do
+      {:ok, _address} ->
+        if phone_number == "" do
+          IO.puts("Phone number is required for Mpesa payment.")
+          {:noreply, push_event(socket, "phone_number_missing", %{})}
+        else
+          case payment_method do
+            #  "bank_card" ->
+            #   case Payments.create_payment_intent(user_id) do
+            #    {:ok, client_secret} ->
+            #     {:noreply,
+            #     push_event(socket, "stripe_checkout", %{client_secret: client_secret})}
+
+            # {:error, reason} ->
+            #  IO.inspect(reason, label: "Payment Intent Error")
+            #     {:noreply, push_navigate(socket, to: "/checkout")}
+            # end
+
+            "mpesa" ->
+              case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
+                     phone_number: phone_number,
+                     amount: amount,
+                     callback_url: "https://728c-41-139-227-122.ngrok-free.app/api/mpesa_callback"
+                   }) do
+                {:ok, response} ->
+                  IO.inspect(response, label: "Mpesa Response")
+                  {:noreply, push_event(socket, "payment_processing", %{status: "pending"})}
+                  {:noreply, push_navigate(socket, to: "/user_account")}
+
+                {:error, %HTTPoison.Error{reason: reason}} ->
+                  IO.inspect(reason, label: "Mpesa HTTPoison Error")
+                  {:noreply, push_navigate(socket, to: "/checkout")}
+
+                {:error, error} ->
+                  IO.inspect(error, label: "Mpesa Payment Error")
+                  {:noreply, push_navigate(socket, to: "/checkout")}
+              end
           end
+        end
 
-        "mpesa" ->
-          case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
-                 phone_number: phone_number,
-                 amount: amount,
-                 callback_url: "https://bc31-41-139-227-122.ngrok-free.app/api/mpesa_callback"
-               }) do
-            {:ok, response} ->
-              IO.inspect(response, label: "Mpesa Response")
-              {:noreply, push_navigate(socket, to: "/user_account")}
-
-            {:error, %HTTPoison.Error{reason: reason}} ->
-              IO.inspect(reason, label: "Mpesa HTTPoison Error")
-              {:noreply, push_navigate(socket, to: "/checkout")}
-
-            {:error, error} ->
-              IO.inspect(error, label: "Mpesa Payment Error")
-              {:noreply, push_navigate(socket, to: "/checkout")}
-          end
-      end
+      {:error, reason} ->
+        IO.inspect(reason, label: "Address Save Error")
+        {:noreply, push_navigate(socket, to: "/checkout")}
     end
   end
 
@@ -110,7 +139,7 @@ defmodule Project2Web.CheckoutLive do
 
   def render(assigns) do
     ~H"""
-    <div class="checkout-container mx-auto max-w-4xl p-6">
+    <div class="checkout-container mx-auto max-w-4xl p-6" style="background:aliceblue;">
       <h2 class="text-3xl font-bold text-center text-green-700 mb-6">Checkout</h2>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">

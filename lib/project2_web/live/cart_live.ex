@@ -73,7 +73,7 @@ defmodule Project2Web.CartLive do
               <img src={item.product.image_url} alt={item.product.name} />
               <div class="flex-1">
                 <h3 class="font-semibold text-lg mb-1"><%= item.product.name %></h3>
-                <p class="text-gray-700 mb-2"><%= item.product.description %></p>
+
                 <p class="text-green-600 font-bold">Price: <%= item.product.price %></p>
                 <div class="flex items-center">
                   <button

@@ -102,17 +102,4 @@ defmodule Project2.Carts do
       {:error, :order_item_not_found}
     end
   end
-
-  def update_order_status(checkout_request_id, status, receipt_number, amount) do
-    order_item = Repo.get_by(OrderItem, checkout_request_id: checkout_request_id)
-
-    changeset =
-      OrderItem.changeset(order_item, %{
-        status: status,
-        mpesa_receipt_number: receipt_number,
-        amount_paid: amount
-      })
-
-    Repo.update(changeset)
-  end
 end

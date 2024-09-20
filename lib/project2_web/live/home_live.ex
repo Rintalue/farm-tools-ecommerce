@@ -109,7 +109,7 @@ defmodule Project2Web.HomeLive do
 
         {:error, _changeset} ->
           IO.puts("Failed to add product to wishlist")
-          {:noreply, assign(socket, cart_message: " Failed")}
+          {:noreply, assign(socket, cart_message: "Failed")}
       end
     else
       IO.puts("User not logged in, cannot add to wishlist")
@@ -117,10 +117,14 @@ defmodule Project2Web.HomeLive do
     end
   end
 
+  def handle_event("view_product", %{"id" => id}, socket) do
+    {:noreply, push_navigate(socket, to: "/products/#{id}")}
+  end
+
   def render(assigns) do
     ~H"""
     <header>
-      <div class="container mx-auto flex  items-center">
+      <div class="container mx-auto flex items-center">
         <button phx-click="toggle_navbar" class="navbar-toggler">
           ☰
         </button>
@@ -131,10 +135,10 @@ defmodule Project2Web.HomeLive do
             class="flex flex-col space-y-4 md:space-y-0 md:flex-row md:space-x-4"
             style="margin:23px;"
           >
-            <li><a href="/" class="hover:text-green-500">Home</a></li>
+            <li><a href="#home" class="hover:text-green-500">Home</a></li>
             <li><a href="/categories" class="hover:text-green-500">Categories</a></li>
-            <li><a href="/about" class="hover:text-green-500">About</a></li>
-            <li><a href="/contact" class="hover:text-green-500">Contact Us</a></li>
+            <li><a href="#about" class="hover:text-green-500">About</a></li>
+            <li><a href="#contact" class="hover:text-green-500">Contact Us</a></li>
           </ul>
         </div>
 
@@ -179,8 +183,29 @@ defmodule Project2Web.HomeLive do
       </div>
     </header>
 
-    <main class="p-4">
-      <section>
+    <main>
+      <!-- Hero Section -->
+      <section
+        id="home"
+        class="relative h-screen bg-gray-200 flex items-center justify-center text-center p-4"
+      >
+        <div
+          class="absolute inset-0 bg-cover bg-center"
+          style="background-image: url('/images/farmer3.png');"
+        >
+        </div>
+        <div class="relative z-10 text-white">
+          <h1 class="text-4xl text-yellow-500 font-bold mb-4">Welcome to Farm Tools E-Commerce</h1>
+          <p class="text-lg mb-8">
+            Discover the best tools for your farm and garden needs. Quality tools and great prices!
+          </p>
+          <a href="#products" class="bg-green-500 text-white p-3 rounded hover:bg-green-400">
+            Shop Now
+          </a>
+        </div>
+      </section>
+      <!-- Products Section -->
+      <section id="products" class="p-4">
         <h2 class="text-center font-bold text-2xl text-green-700 mb-4">Products</h2>
 
         <%= if @cart_message do %>
@@ -191,12 +216,26 @@ defmodule Project2Web.HomeLive do
 
         <ul class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           <%= for product <- @products do %>
-            <li class="border p-4 rounded">
+            <li class="border p-4 rounded shadow-lg relative">
+              <button
+                phx-click="add_to_wishlist"
+                phx-value-product_id={product.id}
+                class="absolute top-2 right-2 p-2 bg-yellow-500 text-white rounded hover:bg-yellow-400"
+                title="Add to Wishlist"
+              >
+                <i class="fa fa-heart" aria-hidden="true"></i>
+              </button>
               <img src={product.image_url} alt={product.name} />
-              <h3 class="font-semibold text-lg"><%= product.name %></h3>
-              <p class="text-gray-700 mb-2"><%= product.description %></p>
-              <p class="text-green-600 font-bold">Price: <%= product.price %></p>
+              <h3 class="font-semibold text-lg mb-2"><%= product.name %></h3>
+              <p class="text-green-600 font-bold mb-2">Price: <%= product.price %></p>
               <div class="flex space-x-2">
+                <button
+                  phx-click="view_product"
+                  phx-value-id={product.id}
+                  class="p-2 bg-blue-800 text-white rounded hover:bg-blue-400"
+                >
+                  View Details
+                </button>
                 <button
                   phx-click="add_to_cart"
                   phx-value-product_id={product.id}
@@ -204,20 +243,73 @@ defmodule Project2Web.HomeLive do
                 >
                   <i class="fa fa-shopping-cart" aria-hidden="true"></i> Add to Cart
                 </button>
-                <button
-                  phx-click="add_to_wishlist"
-                  phx-value-product_id={product.id}
-                  class="p-2 bg-yellow-500 text-white rounded hover:bg-blue-400"
-                >
-                  <i class="fa fa-heart" aria-hidden="true"></i> Add to Wishlist
-                </button>
               </div>
             </li>
           <% end %>
         </ul>
       </section>
+      <!-- About Us Section -->
+      <section id="about" class="p-4 bg-white">
+        <h2 class="text-center font-bold text-2xl text-green-700 mb-4">About Us</h2>
+        <div class="container mx-auto flex flex-col md:flex-row items-center">
+          <div class="md:w-1/2">
+            <img src="/images/farm4.png" alt="About Us" class="w-full h-auto rounded shadow-lg" />
+          </div>
+          <div class="md:w-1/2 md:ml-4">
+            <p class="text-lg">
+              We are dedicated to providing high-quality farm tools to help you get the job done. Our products are selected for their durability and effectiveness, ensuring that you get the best value for your money.
+            </p>
+            <p class="mt-4">
+              Whether you're a professional farmer or a gardening enthusiast, our range of products has something for everyone. Explore our collection and find the perfect tools for your needs.
+            </p>
+          </div>
+        </div>
+      </section>
+      <!-- Contact Us Section -->
+      <section id="contact" class="p-4 bg-gray-100">
+        <h2 class="text-center font-bold text-2xl text-green-700 mb-4">Contact Us</h2>
+        <div class="container mx-auto">
+          <p class="text-lg mb-4">
+            We'd love to hear from you! If you have any questions or need assistance, please reach out to us using the contact form below.
+          </p>
+          <form class="bg-white p-4 rounded shadow-md" action="/contact" method="post">
+            <div class="mb-4">
+              <label for="name" class="block text-sm font-semibold mb-2">Name:</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                class="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="email" class="block text-sm font-semibold mb-2">Email:</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                class="w-full p-2 border border-gray-300 rounded"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="message" class="block text-sm font-semibold mb-2">Message:</label>
+              <textarea
+                id="message"
+                name="message"
+                class="w-full p-2 border border-gray-300 rounded"
+                rows="4"
+                required
+              ></textarea>
+            </div>
+            <button type="submit" class="bg-green-500 text-white p-3 rounded hover:bg-green-400">
+              Send Message
+            </button>
+          </form>
+        </div>
+      </section>
     </main>
-
     <nav class="fixed bottom-0 left-0 w-full bg-white shadow-md md:hidden">
       <div class="container mx-auto flex items-center justify-between p-4">
         <form phx-submit="search" class="flex" id="search">
@@ -261,37 +353,22 @@ defmodule Project2Web.HomeLive do
         </form>
       </div>
     </nav>
-    <footer>
-      <section class="icons-container grid grid-cols-2 md:grid-cols-4 gap-4 p-4">
-        <div class="icons">
-          <i class="fa fa-plane"></i>
-          <div class="content">
-            <h3>Free Shipping</h3>
-            <p>Order over Kshs.1000</p>
-          </div>
-        </div>
-        <div class="icons">
-          <i class="fa fa-lock"></i>
-          <div class="content">
-            <h3>Secure Payment</h3>
-            <p>For the best experience</p>
-          </div>
-        </div>
-        <div class="icons">
-          <i class="fa fa-undo"></i>
-          <div class="content">
-            <h3>Easier Returns</h3>
-            <p>10 day return period</p>
-          </div>
-        </div>
-        <div class="icons">
-          <i class="fa fa-gift"></i>
-          <div class="content">
-            <h3>Gift Shop</h3>
-            <p>Available all year round</p>
-          </div>
-        </div>
-      </section>
+    <footer class="bg-gray-800 text-white p-4">
+      <div class="container mx-auto text-center">
+        <p class="mb-2">© 2024 Farm Tools E-Commerce. All rights reserved.</p>
+        <p class="font-semibold mb-2">Contact Us</p>
+        <p class="mb-2">
+          Email:
+          <a href="mailto:info@luthera.com" class="text-gray-400 hover:text-gray-300">
+            info@luthera.com
+          </a>
+        </p>
+        <p class="mb-2">
+          Phone:
+          <a href="tel:+1234567890" class="text-gray-400 hover:text-gray-300">+254-704-00190</a>
+        </p>
+        <p class="mb-2">Location: 123 Ring Road, Nairobi, Kenya</p>
+      </div>
     </footer>
     """
   end

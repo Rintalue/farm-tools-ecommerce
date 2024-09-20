@@ -6,19 +6,23 @@ defmodule Project2Web.VendorProductLive do
 
   def mount(_params, _session, socket) do
     current_vendor = get_current_vendor(socket)
+    categories = Products.list_categories()
 
     products =
       if current_vendor do
-        Products.list_products(current_vendor.id)
+        Products.list_products_by_vendor(current_vendor.id)
       else
         []
       end
 
-    {:ok,
-     socket
-     |> assign(:current_vendor, current_vendor)
-     |> assign(:changeset, Products.change_product(%Product{}))
-     |> assign(:products, products)}
+    socket =
+      socket
+      |> assign(:current_vendor, current_vendor)
+      |> assign(:changeset, Products.change_product(%Product{}))
+      |> assign(:products, products)
+      |> assign(:categories, categories)
+
+    {:ok, socket}
   end
 
   def handle_event("save", %{"product" => product_params}, socket) do
@@ -73,14 +77,21 @@ defmodule Project2Web.VendorProductLive do
       </textarea>
       <%= error_tag(@changeset, :description) %>
 
+      <label for="product_category">Category</label>
+      <select name="product[category_id]" id="product_category">
+        <%= for category <- @categories do %>
+          <option value={category.id}><%= category.name %></option>
+        <% end %>
+      </select>
+      <%= error_tag(@changeset, :category_id) %>
+
       <label for="product_price">Price</label>
       <input
         type="number"
         name="product[price]"
         id="product_price"
         value={@changeset.data.price || ""}
-      />
-      <%= error_tag(@changeset, :price) %>
+      /> <%= error_tag(@changeset, :price) %>
 
       <button class="submit" type="submit">Add Product</button>
     </form>
@@ -94,6 +105,8 @@ defmodule Project2Web.VendorProductLive do
             <h3><%= product.name %></h3>
             <p><%= product.description %></p>
             <p>Price: <%= product.price %></p>
+            <p>Category: <%= product.category.name %></p>
+
             <a class="submit2" href={"/products/#{product.id}/edit"}>Edit</a>
           </li>
         <% end %>
