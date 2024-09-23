@@ -1,7 +1,7 @@
 defmodule Project2Web.CheckoutLive do
   use Phoenix.LiveView
   alias Project2.Carts
-  alias Project2.Payments
+  # alias Project2.Payments
   alias Project2.Accounts
 
   def mount(_params, _session, socket) do
@@ -107,7 +107,8 @@ defmodule Project2Web.CheckoutLive do
               case Project2.Payments.Mpesa.lipa_na_mpesa_online(%{
                      phone_number: phone_number,
                      amount: amount,
-                     callback_url: "https://728c-41-139-227-122.ngrok-free.app/api/mpesa_callback"
+                     callback_url: "https://be10-41-139-227-122.ngrok-free.app/api/mpesa_callback
+                     "
                    }) do
                 {:ok, response} ->
                   IO.inspect(response, label: "Mpesa Response")
