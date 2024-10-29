@@ -1,4 +1,8 @@
-# Project2
+# Farm tools Ecommercer
+
+An ecommerce platform built for the selling of all types of farm tools
+
+Buit using phoenix live view
 
 To start your Phoenix server:
 
