@@ -1,4 +1,4 @@
-# Farm tools Ecommercer
+# Farm tools Ecommerce
 
 An ecommerce platform built for the selling of all types of farm tools
 
